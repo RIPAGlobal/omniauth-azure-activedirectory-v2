@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'omniauth/azure_activedirectory_v2'
 
-RSpec.describe OmniAuth::Strategies::AzureActiveDirectoryV2 do
+RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
   let(:request) { double('Request', :params => {}, :cookies => {}, :env => {}) }
   let(:app) {
     lambda do
@@ -20,7 +20,7 @@ RSpec.describe OmniAuth::Strategies::AzureActiveDirectoryV2 do
   describe 'static configuration' do
     let(:options) { @options || {} }
     subject do
-      OmniAuth::Strategies::AzureActiveDirectoryV2.new(app, {client_id: 'id', client_secret: 'secret', tenant_id: 'tenant'}.merge(options))
+      OmniAuth::Strategies::AzureActivedirectoryV2.new(app, {client_id: 'id', client_secret: 'secret', tenant_id: 'tenant'}.merge(options))
     end
 
     describe '#client' do
@@ -55,7 +55,7 @@ RSpec.describe OmniAuth::Strategies::AzureActiveDirectoryV2 do
   describe 'static configuration - german' do
     let(:options) { @options || {} }
     subject do
-      OmniAuth::Strategies::AzureActiveDirectoryV2.new(app, {client_id: 'id', client_secret: 'secret', tenant_id: 'tenant', base_azure_url: 'https://login.microsoftonline.de'}.merge(options))
+      OmniAuth::Strategies::AzureActivedirectoryV2.new(app, {client_id: 'id', client_secret: 'secret', tenant_id: 'tenant', base_azure_url: 'https://login.microsoftonline.de'}.merge(options))
     end
 
     describe '#client' do
@@ -95,7 +95,7 @@ RSpec.describe OmniAuth::Strategies::AzureActiveDirectoryV2 do
   describe 'static common configuration' do
     let(:options) { @options || {} }
     subject do
-      OmniAuth::Strategies::AzureActiveDirectoryV2.new(app, {client_id: 'id', client_secret: 'secret'}.merge(options))
+      OmniAuth::Strategies::AzureActivedirectoryV2.new(app, {client_id: 'id', client_secret: 'secret'}.merge(options))
     end
 
     before do
@@ -138,7 +138,7 @@ RSpec.describe OmniAuth::Strategies::AzureActiveDirectoryV2 do
     }
 
     subject do
-      OmniAuth::Strategies::AzureActiveDirectoryV2.new(app, provider_klass)
+      OmniAuth::Strategies::AzureActivedirectoryV2.new(app, provider_klass)
     end
 
     before do
@@ -206,7 +206,7 @@ RSpec.describe OmniAuth::Strategies::AzureActiveDirectoryV2 do
     }
 
     subject do
-      OmniAuth::Strategies::AzureActiveDirectoryV2.new(app, provider_klass)
+      OmniAuth::Strategies::AzureActivedirectoryV2.new(app, provider_klass)
     end
 
     before do
@@ -261,7 +261,7 @@ RSpec.describe OmniAuth::Strategies::AzureActiveDirectoryV2 do
     }
 
     subject do
-      OmniAuth::Strategies::AzureActiveDirectoryV2.new(app, provider_klass)
+      OmniAuth::Strategies::AzureActivedirectoryV2.new(app, provider_klass)
     end
 
     before do
@@ -281,7 +281,7 @@ RSpec.describe OmniAuth::Strategies::AzureActiveDirectoryV2 do
 
   describe "raw_info" do
     subject do
-      OmniAuth::Strategies::AzureActiveDirectoryV2.new(app, {client_id: 'id', client_secret: 'secret'})
+      OmniAuth::Strategies::AzureActivedirectoryV2.new(app, {client_id: 'id', client_secret: 'secret'})
     end
 
     let(:access_token) do

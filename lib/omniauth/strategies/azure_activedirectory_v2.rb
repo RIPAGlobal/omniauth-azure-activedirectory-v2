@@ -2,7 +2,7 @@ require 'omniauth-oauth2'
 
 module OmniAuth
   module Strategies
-    class AzureActiveDirectoryV2 < OmniAuth::Strategies::OAuth2
+    class AzureActivedirectoryV2 < OmniAuth::Strategies::OAuth2
       BASE_AZURE_URL = 'https://login.microsoftonline.com'
 
       option :name, 'azure_activedirectory_v2'
