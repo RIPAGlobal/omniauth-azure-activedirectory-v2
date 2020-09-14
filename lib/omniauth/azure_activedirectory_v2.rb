@@ -1,0 +1,1 @@
+require File.join('omniauth', 'strategies', 'azure_activedirectory_v2.rb')
