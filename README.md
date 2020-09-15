@@ -1,6 +1,6 @@
 # Omniauth::Azure::Activedirectory::V2
 
-OAuth 2 authentication with Azure ActiveDirectory's V2 API. Rationale:
+OAuth 2 authentication with [Azure ActiveDirectory's V2 API](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-overview). Rationale:
 
 * https://github.com/marknadig/omniauth-azure-oauth2 is no longer maintained.
 * https://github.com/marknadig/omniauth-azure-oauth2/pull/29 contains important additions.
