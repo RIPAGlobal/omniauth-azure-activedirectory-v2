@@ -284,36 +284,37 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
       OmniAuth::Strategies::AzureActivedirectoryV2.new(app, {client_id: 'id', client_secret: 'secret'})
     end
 
+    let(:token_info) do
+      {
+          oid:         'my_id',
+          name:        'Bob Doe',
+          email:       'bob@doe.com',
+          unique_name: 'bobby',
+          given_name:  'Bob',
+          family_name: 'Doe'
+      }
+    end
+
+    let(:token) do
+      JWT.encode(token_info, "secret")
+    end
+
     let(:access_token) do
-      double
+      double(:token => token)
     end
 
     before do
       allow(subject).to receive(:access_token) { access_token }
       allow(subject).to receive(:request) { request }
-      expect(access_token)
-          .to receive(:get)
-                  .with('https://graph.microsoft.com/v1.0/me')
-                  .and_return(
-                      double({
-                                 parsed: {
-                                     'id' => 'my_id',
-                                     'displayName' => 'Bob Doe',
-                                     'givenName' => 'Bob',
-                                     'surname' => 'Doe',
-                                     'userPrincipalName' => 'bob@doe.com'
-                                 }
-                             })
-                  )
     end
 
     it "info returns correct info" do
       expect(subject.info).to eq({
-                                     email: 'bob@doe.com',
+                                     name:       'Bob Doe',
+                                     email:      'bob@doe.com',
+                                     nickname:   'bobby',
                                      first_name: 'Bob',
-                                     id: 'my_id',
-                                     last_name: 'Doe',
-                                     name: 'Bob Doe',
+                                     last_name:  'Doe'
                                  })
     end
 
