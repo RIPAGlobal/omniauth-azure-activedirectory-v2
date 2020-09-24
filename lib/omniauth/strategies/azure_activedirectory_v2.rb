@@ -62,12 +62,24 @@ module OmniAuth
 
       # https://docs.microsoft.com/en-us/azure/active-directory/develop/id-tokens
       #
+      # Some account types from Microsoft seem to only have a decodable ID token,
+      # with JWT unable to decode the access token. Information is limited in those
+      # cases. Other account types provide an expanded set of data inside the auth
+      # token, which does decode as a JWT.
+      #
+      # Merge the two, allowing the expanded auth token data to overwrite the ID
+      # token data if keys collide, and use this as raw info.
+      #
       def raw_info
-        @raw_info ||= (
-          (::JWT.decode(access_token.params['id_token'], nil, false).first rescue nil) ||
-          (::JWT.decode(access_token.token,              nil, false).first rescue nil) ||
-          {}
-        )
+        if @raw_info.nil?
+          id_token_data   = ::JWT.decode(access_token.params['id_token'], nil, false).first rescue {}
+          auth_token_data = ::JWT.decode(access_token.token,              nil, false).first rescue {}
+
+          id_token_data.merge!(auth_token_data)
+          @raw_info = id_token_data
+        end
+
+        @raw_info
       end
 
     end
