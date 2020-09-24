@@ -9,7 +9,6 @@ module OmniAuth
       option :tenant_provider, nil
 
       DEFAULT_SCOPE = 'openid profile email'
-      USER_INFO_URL = 'https://graph.microsoft.com/v1.0/me'
 
       # tenant_provider must return client_id, client_secret and optionally tenant_id and base_azure_url
       args [:tenant_provider]
@@ -40,17 +39,21 @@ module OmniAuth
       end
 
       uid {
-        raw_info['id']
+        raw_info['oid']
       }
 
       info do
         {
-            name: raw_info['displayName'],
-            first_name: raw_info['givenName'],
-            last_name: raw_info['surname'],
-            email: raw_info['userPrincipalName'],
-            id: raw_info['id'],
+            name: raw_info['name'],
+            email: raw_info['email'] || raw_info['upn'],
+            nickname: raw_info['unique_name'],
+            first_name: raw_info['given_name'],
+            last_name: raw_info['family_name']
         }
+      end
+
+      extra do
+        { raw_info: raw_info }
       end
 
       def callback_url
@@ -58,7 +61,8 @@ module OmniAuth
       end
 
       def raw_info
-        @raw_info ||= access_token.get(USER_INFO_URL).parsed
+        # it's all here in JWT http://msdn.microsoft.com/en-us/library/azure/dn195587.aspx
+        @raw_info ||= ::JWT.decode(access_token.token, nil, false).first
       end
 
     end

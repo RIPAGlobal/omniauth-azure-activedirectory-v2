@@ -1,11 +1,15 @@
 # Omniauth::Azure::Activedirectory::V2
 
+[![Gem Version](https://badge.fury.io/rb/omniauth-azure-activedirectory-v2.svg)](https://badge.fury.io/rb/omniauth-azure-activedirectory-v2)
+[![Build Status](https://travis-ci.org/RIPGlobal/omniauth-azure-activedirectory-v2.svg)](https://travis-ci.org/RIPGlobal/omniauth-azure-activedirectory-v2)
+[![License](https://img.shields.io/github/license/RIPGlobal/omniauth-azure-activedirectory-v2.svg)](LICENSE.md)
+
 OAuth 2 authentication with [Azure ActiveDirectory's V2 API](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-overview). Rationale:
 
 * https://github.com/marknadig/omniauth-azure-oauth2 is no longer maintained.
 * https://github.com/marknadig/omniauth-azure-oauth2/pull/29 contains important additions.
 
-This gem combines the two.
+This gem combines the two and makes some changes to support the full V2 API.
 
 The ActiveDirectory V1 auth API used OpenID Connect. If you need this, a gem from Microsoft [is available here](https://github.com/AzureAD/omniauth-azure-activedirectory), but seems to be abandoned.
 
