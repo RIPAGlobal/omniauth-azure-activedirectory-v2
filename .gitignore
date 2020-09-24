@@ -14,3 +14,6 @@ Gemfile.lock
 
 # ide
 .idea
+
+# built gems
+*.gem

@@ -60,9 +60,14 @@ module OmniAuth
         full_host + script_name + callback_path
       end
 
+      # https://docs.microsoft.com/en-us/azure/active-directory/develop/id-tokens
+      #
       def raw_info
-        # it's all here in JWT http://msdn.microsoft.com/en-us/library/azure/dn195587.aspx
-        @raw_info ||= ::JWT.decode(access_token.token, nil, false).first
+        @raw_info ||= (
+          (::JWT.decode(access_token.params['id_token'], nil, false).first rescue nil) ||
+          (::JWT.decode(access_token.token,              nil, false).first rescue nil) ||
+          {}
+        )
       end
 
     end

@@ -1,29 +1,49 @@
-require_relative 'lib/omniauth/azure_activedirectory_v2/version'
+# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+# stub: omniauth-azure-activedirectory-v2 1.0.0 ruby lib
 
-Gem::Specification.new do |spec|
-  spec.name          = 'omniauth-azure-activedirectory-v2'
-  spec.version       = Omniauth::Azure::Activedirectory::V2::VERSION
-  spec.authors       = ['RIP Global']
-  spec.email         = ['dev@ripglobal.com']
+$:.push File.expand_path( '../lib', __FILE__ )
+require 'omniauth/azure_activedirectory_v2/version'
 
-  spec.summary       = %q{OAuth 2 authentication with Azure ActiveDirectory's V2 API}
-  spec.homepage      = 'https://github.com/RIPGlobal/omniauth-azure-activedirectory-v2'
-  spec.license       = 'MIT'
-  spec.required_ruby_version = Gem::Requirement.new(">= 2.3.0")
+# https://guides.rubygems.org/specification-reference/
+#
+Gem::Specification.new do |s|
+  s.name                  = 'omniauth-azure-activedirectory-v2'
+  s.version               = Omniauth::Azure::Activedirectory::V2::VERSION
+  s.date                  = Omniauth::Azure::Activedirectory::V2::DATE
+  s.summary               = 'OAuth 2 authentication with the Azure ActiveDirectory V2 API.'
+  s.authors               = [ 'RIP Global'        ]
+  s.email                 = [ 'dev@ripglobal.com' ]
+  s.licenses              = [ 'MIT'               ]
+  s.homepage              = 'https://github.com/RIPGlobal/omniauth-azure-activedirectory-v2'
 
-  spec.metadata['homepage_uri']    = spec.homepage
-  spec.metadata['source_code_uri'] = 'https://github.com/RIPGlobal/omniauth-azure-activedirectory-v2'
-  spec.metadata['bug_tracker_uri'] = 'https://github.com/RIPGlobal/omniauth-azure-activedirectory-v2/issues/'
-  spec.metadata['changelog_uri']   = 'https://github.com/RIPGlobal/omniauth-azure-activedirectory-v2/blob/master/CHANGELOG.md'
+  s.required_ruby_version = Gem::Requirement.new('>= 2.3.0')
+  s.require_paths         = ['lib']
+  s.bindir                = 'exe'
+  s.files                 = %w{
+    README.md
+    CHANGELOG.md
+    CODE_OF_CONDUCT.md
+    LICENSE.txt
 
-  # Specify which files should be added to the gem when it is released.
-  # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
-  spec.files         = Dir.chdir(File.expand_path('..', __FILE__)) do
-    `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
-  end
-  spec.bindir        = 'exe'
-  spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
-  spec.require_paths = ['lib']
+    Gemfile
+    bin/console
+    bin/setup
 
-  spec.add_dependency 'omniauth-oauth2'
+    lib/omniauth-azure-activedirectory-v2.rb
+    lib/omniauth/azure_activedirectory_v2.rb
+    lib/omniauth/azure_activedirectory_v2/version.rb
+    lib/omniauth/strategies/azure_activedirectory_v2.rb
+
+    omniauth-azure-activedirectory-v2.gemspec
+  }
+
+  s.metadata = {
+    'homepage_uri'    => 'https://www.ripglobal.com/',
+    'bug_tracker_uri' => 'https://github.com/RIPGlobal/omniauth-azure-activedirectory-v2/issues/',
+    'changelog_uri'   => 'https://github.com/RIPGlobal/omniauth-azure-activedirectory-v2/blob/master/CHANGELOG.md',
+    'source_code_uri' => 'https://github.com/RIPGlobal/omniauth-azure-activedirectory-v2'
+  }
+
+  s.add_runtime_dependency('omniauth-oauth2', '~> 1.7')
 end

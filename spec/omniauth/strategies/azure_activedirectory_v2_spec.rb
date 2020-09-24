@@ -286,21 +286,21 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
 
     let(:token_info) do
       {
-          oid:         'my_id',
-          name:        'Bob Doe',
-          email:       'bob@doe.com',
-          unique_name: 'bobby',
-          given_name:  'Bob',
-          family_name: 'Doe'
+        oid:         'my_id',
+        name:        'Bob Doe',
+        email:       'bob@doe.com',
+        unique_name: 'bobby',
+        given_name:  'Bob',
+        family_name: 'Doe'
       }
     end
 
-    let(:token) do
+    let(:id_token) do
       JWT.encode(token_info, "secret")
     end
 
     let(:access_token) do
-      double(:token => token)
+      double(:token => SecureRandom.uuid, :params => {'id_token' => id_token})
     end
 
     before do
@@ -310,11 +310,11 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
 
     it "info returns correct info" do
       expect(subject.info).to eq({
-                                     name:       'Bob Doe',
-                                     email:      'bob@doe.com',
-                                     nickname:   'bobby',
-                                     first_name: 'Bob',
-                                     last_name:  'Doe'
+                                   name:       'Bob Doe',
+                                   email:      'bob@doe.com',
+                                   nickname:   'bobby',
+                                   first_name: 'Bob',
+                                   last_name:  'Doe'
                                  })
     end
 
