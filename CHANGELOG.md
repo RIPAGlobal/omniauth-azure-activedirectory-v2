@@ -10,7 +10,7 @@ Remove use of the https://graph.microsoft.com/v1.0/me API …
 
   - In testing found that these accounts may not have access to this
     endpoint
-  - All the data provided in `info` exists in the JWT anyway this
+  - All the data provided in `info` exists in the JWT anyway, so this
     cuts down on API calls
 
 * Conform to the Omniauth Auth Hash Schema (1.0 and later) see:
