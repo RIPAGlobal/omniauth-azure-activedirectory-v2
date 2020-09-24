@@ -279,47 +279,81 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
     end
   end
 
-  describe "raw_info" do
+  describe 'raw_info' do
     subject do
       OmniAuth::Strategies::AzureActivedirectoryV2.new(app, {client_id: 'id', client_secret: 'secret'})
     end
 
-    let(:token_info) do
+    let(:id_token_info) do
       {
-          oid:         'my_id',
-          name:        'Bob Doe',
-          email:       'bob@doe.com',
-          unique_name: 'bobby',
-          given_name:  'Bob',
-          family_name: 'Doe'
+        oid:         'my_id',
+        name:        'Bob Doe',
+        email:       'bob@doe.com',
+        unique_name: 'bobby'
       }
     end
 
-    let(:token) do
-      JWT.encode(token_info, "secret")
+    let(:id_token) do
+      JWT.encode(id_token_info, 'secret')
     end
 
     let(:access_token) do
-      double(:token => token)
+      double(:token => SecureRandom.uuid, :params => {'id_token' => id_token})
     end
 
     before do
       allow(subject).to receive(:access_token) { access_token }
-      allow(subject).to receive(:request) { request }
+      allow(subject).to receive(:request)      { request      }
     end
 
-    it "info returns correct info" do
-      expect(subject.info).to eq({
+    context 'with information only in the ID token' do
+      it 'returns correct info' do
+        expect(subject.info).to eq({
+                                     name:      'Bob Doe',
+                                     email:     'bob@doe.com',
+                                     nickname:  'bobby',
+                                     first_name: nil,
+                                     last_name:  nil
+                                   })
+      end
+
+      it 'returns correct uid' do
+        expect(subject.uid).to eq('my_id')
+      end
+    end # "context 'with information only in the ID token' do"
+
+    context 'with extra information in the auth token' do
+      let(:auth_token_info) do
+        {
+          oid:         'overridden_id',
+          email:       'bob@doe.com',
+          unique_name: 'Bobby Definitely Doe',
+          given_name:  'Bob',
+          family_name: 'Doe'
+        }
+      end
+
+      let(:auth_token) do
+        JWT.encode(auth_token_info, 'secret')
+      end
+
+      let(:access_token) do
+        double(:token => auth_token, :params => {'id_token' => id_token})
+      end
+
+      it 'returns correct info' do
+        expect(subject.info).to eq({
                                      name:       'Bob Doe',
                                      email:      'bob@doe.com',
-                                     nickname:   'bobby',
+                                     nickname:   'Bobby Definitely Doe',
                                      first_name: 'Bob',
                                      last_name:  'Doe'
-                                 })
-    end
+                                   })
+      end
 
-    it "uid returns correct uid" do
-      expect(subject.uid).to eq('my_id')
-    end
-  end
+      it 'returns correct uid' do
+        expect(subject.uid).to eq('overridden_id')
+      end
+    end # "context 'with extra information in the auth token' do"
+  end   # "describe 'raw_info' do"
 end
