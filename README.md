@@ -41,7 +41,7 @@ See https://github.com/marknadig/omniauth-azure-oauth2 for background informatio
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/RIPGlobal/omniauth-azure-activedirectory-v2. This project is intended to be a safe, welcoming space for collaboration so contributors must adhere to the [code of conduct](https://github.com/[USERNAME]/omniauth-azure-activedirectory-v2/blob/master/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/RIPGlobal/omniauth-azure-activedirectory-v2. This project is intended to be a safe, welcoming space for collaboration so contributors must adhere to the [code of conduct](https://github.com/RIPGlobal/omniauth-azure-activedirectory-v2/blob/master/CODE_OF_CONDUCT.md).
 
 
 
@@ -53,4 +53,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in this project's codebases, issue trackers, chat rooms and mailing lists must follow the [code of conduct](https://github.com/[USERNAME]/omniauth-azure-activedirectory-v2/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in this project's codebases, issue trackers, chat rooms and mailing lists must follow the [code of conduct](https://github.com/RIPGlobal/omniauth-azure-activedirectory-v2/blob/master/CODE_OF_CONDUCT.md).
