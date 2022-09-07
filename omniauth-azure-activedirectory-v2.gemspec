@@ -45,5 +45,5 @@ Gem::Specification.new do |s|
     'source_code_uri' => 'https://github.com/RIPGlobal/omniauth-azure-activedirectory-v2'
   }
 
-  s.add_runtime_dependency('omniauth-oauth2', '~> 1.7')
+  s.add_runtime_dependency('omniauth-oauth2', '~> 1.8')
 end

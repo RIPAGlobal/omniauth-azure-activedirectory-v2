@@ -57,7 +57,7 @@ module OmniAuth
       end
 
       def callback_url
-        full_host + script_name + callback_path
+        full_host + callback_path
       end
 
       # https://docs.microsoft.com/en-us/azure/active-directory/develop/id-tokens
