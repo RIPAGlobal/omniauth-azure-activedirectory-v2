@@ -1,5 +1,13 @@
 # Change Log
 
+## v2.0.0 (2022-09-14)
+
+Makes compatible with OmniAuth 2 and requires it.
+
+Note: https://github.com/RIPAGlobal/omniauth-azure-activedirectory-v2/pull/6 for reasoning - Thanks @jessieay
+
+_Major version bump as no longer supports Omniauth 1._
+
 ## v1.0.0 (2020-09-25)
 
 Removes use of the https://graph.microsoft.com/v1.0/me API.
