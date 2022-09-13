@@ -356,4 +356,24 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
       end
     end # "context 'with extra information in the auth token' do"
   end   # "describe 'raw_info' do"
+
+  describe 'callback_url' do
+    subject do
+      OmniAuth::Strategies::AzureActivedirectoryV2.new(app, { client_id: 'id', client_secret: 'secret', tenant_id: 'tenant' })
+    end
+
+    let(:base_url) { 'https://example.com' }
+
+    it 'has the correct default callback path' do
+      allow(subject).to receive(:full_host) { base_url }
+      allow(subject).to receive(:script_name) { '' }
+      expect(subject.callback_url).to eq(base_url + '/auth/azure_activedirectory_v2/callback')
+    end
+
+    it 'should set the callback path with script_name if present' do
+      allow(subject).to receive(:full_host) { base_url }
+      allow(subject).to receive(:script_name) { '/v1' }
+      expect(subject.callback_url).to eq(base_url + '/v1/auth/azure_activedirectory_v2/callback')
+    end
+  end
 end
