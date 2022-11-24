@@ -37,8 +37,6 @@ Or install it yourself as:
 
 See https://github.com/marknadig/omniauth-azure-oauth2 for background information. Note that with this gem, the provider name you use is `:azure_activedirectory_v2`.
 
-Some additional information is helpful when using provider classes, covered in https://github.com/marknadig/omniauth-azure-oauth2#usage with a `YouTenantProvider` example.
-
 ### Configuration
 
 #### With `OmniAuth::Builder`
