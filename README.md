@@ -48,7 +48,7 @@ use OmniAuth::Builder do
   provider(
     :azure_activedirectory_v2,
     {
-      client_id:     ENV['AZURE_CLIENT_ID'    ],
+      client_id:     ENV['AZURE_CLIENT_ID'],
       client_secret: ENV['AZURE_CLIENT_SECRET']
     }
   )
@@ -74,7 +74,7 @@ In your `config/initializers/devise.rb` file you can do something like this if s
 config.omniauth(
   :azure_activedirectory_v2,
   {
-    client_id:     ENV['AZURE_CLIENT_ID'    ],
+    client_id:     ENV['AZURE_CLIENT_ID'],
     client_secret: ENV['AZURE_CLIENT_SECRET']
   }
 )
