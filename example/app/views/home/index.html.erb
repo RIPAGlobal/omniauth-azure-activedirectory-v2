@@ -1,0 +1,17 @@
+<h1>Homepage</h1>
+
+<p>This is the homepage.</p>
+<p><%= link_to "View secret page", home_secret_path %>.</p>
+
+<hr/>
+
+
+<% if current_user %>
+  <p>You are <span class="text-success">currently logged in</span>.</p>
+  <p><%= link_to "Logout", logout_path, class: "btn btn-outline-primary" %></p>
+<% else %>
+  <p>You are <span class="text-danger">not currently logged in</span>.</p>
+  <p><%= link_to "Login with Azure AD",
+         user_azure_activedirectory_v2_omniauth_authorize_path,
+         class: 'btn btn-outline-primary' %></p>
+<% end %>
