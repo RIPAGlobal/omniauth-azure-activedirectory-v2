@@ -1,4 +1,4 @@
-module Omniauth
+module OmniAuth
   module Azure
     module Activedirectory
       module V2

@@ -6,7 +6,7 @@ Makes compatible with OmniAuth 2 and requires it.
 
 Note: https://github.com/RIPAGlobal/omniauth-azure-activedirectory-v2/pull/6 for reasoning - Thanks @jessieay
 
-_Major version bump as no longer supports Omniauth 1._
+_Major version bump as no longer supports OmniAuth 1._
 
 ## v1.0.0 (2020-09-25)
 
@@ -21,7 +21,7 @@ Removes use of the https://graph.microsoft.com/v1.0/me API.
   - All the data provided in `info` exists in the JWT anyway, so this
     cuts down on API calls
 
-* Conforms to the Omniauth Auth Hash Schema (1.0 and later) - see:
+* Conforms to the OmniAuth Auth Hash Schema (1.0 and later) - see:
   https://github.com/omniauth/omniauth/wiki/Auth-Hash-Schema
 
   - Expose `raw_info`
