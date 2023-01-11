@@ -1,8 +1,8 @@
 # OmniAuth::Azure::Activedirectory::V2
 
 [![Gem Version](https://badge.fury.io/rb/omniauth-azure-activedirectory-v2.svg)](https://badge.fury.io/rb/omniauth-azure-activedirectory-v2)
-[![Build Status](https://travis-ci.org/RIPGlobal/omniauth-azure-activedirectory-v2.svg)](https://travis-ci.org/RIPGlobal/omniauth-azure-activedirectory-v2)
-[![License](https://img.shields.io/github/license/RIPGlobal/omniauth-azure-activedirectory-v2.svg)](LICENSE.md)
+[![Build Status](https://app.travis-ci.com/RIPAGlobal/omniauth-azure-activedirectory-v2.svg?branch=master)](https://app.travis-ci.com/github/RIPAGlobal/omniauth-azure-activedirectory-v2)
+[![License](https://img.shields.io/github/license/RIPAGlobal/omniauth-azure-activedirectory-v2.svg)](LICENSE.md)
 
 OAuth 2 authentication with [Azure ActiveDirectory's V2 API](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-overview). Rationale:
 
@@ -154,7 +154,7 @@ In method `#authorize_params` above, the request object is used to look for a `l
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/RIPGlobal/omniauth-azure-activedirectory-v2. This project is intended to be a safe, welcoming space for collaboration so contributors must adhere to the [code of conduct](https://github.com/RIPGlobal/omniauth-azure-activedirectory-v2/blob/master/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/RIPAGlobal/omniauth-azure-activedirectory-v2. This project is intended to be a safe, welcoming space for collaboration so contributors must adhere to the [code of conduct](https://github.com/RIPAGlobal/omniauth-azure-activedirectory-v2/blob/master/CODE_OF_CONDUCT.md).
 
 
 
@@ -166,4 +166,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in this project's codebases, issue trackers, chat rooms and mailing lists must follow the [code of conduct](https://github.com/RIPGlobal/omniauth-azure-activedirectory-v2/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in this project's codebases, issue trackers, chat rooms and mailing lists must follow the [code of conduct](https://github.com/RIPAGlobal/omniauth-azure-activedirectory-v2/blob/master/CODE_OF_CONDUCT.md).
