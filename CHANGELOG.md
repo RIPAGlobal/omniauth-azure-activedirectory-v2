@@ -1,5 +1,14 @@
 # Change Log
 
+## v2.0.1 (2023-01-11)
+
+Renames:
+
+* RIPGlobal -> RIPAGlobal
+* Omniauth -> OmniAuth
+
+_No functional change._
+
 ## v2.0.0 (2022-09-14)
 
 Makes compatible with OmniAuth 2 and requires it.
