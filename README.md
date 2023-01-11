@@ -1,4 +1,4 @@
-# Omniauth::Azure::Activedirectory::V2
+# OmniAuth::Azure::Activedirectory::V2
 
 [![Gem Version](https://badge.fury.io/rb/omniauth-azure-activedirectory-v2.svg)](https://badge.fury.io/rb/omniauth-azure-activedirectory-v2)
 [![Build Status](https://travis-ci.org/RIPGlobal/omniauth-azure-activedirectory-v2.svg)](https://travis-ci.org/RIPGlobal/omniauth-azure-activedirectory-v2)

@@ -9,8 +9,8 @@ require 'omniauth/azure_activedirectory_v2/version'
 #
 Gem::Specification.new do |s|
   s.name                  = 'omniauth-azure-activedirectory-v2'
-  s.version               = Omniauth::Azure::Activedirectory::V2::VERSION
-  s.date                  = Omniauth::Azure::Activedirectory::V2::DATE
+  s.version               = OmniAuth::Azure::Activedirectory::V2::VERSION
+  s.date                  = OmniAuth::Azure::Activedirectory::V2::DATE
   s.summary               = 'OAuth 2 authentication with the Azure ActiveDirectory V2 API.'
   s.authors               = [ 'RIP Global'        ]
   s.email                 = [ 'dev@ripglobal.com' ]
