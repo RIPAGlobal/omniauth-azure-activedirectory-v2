@@ -2,8 +2,8 @@ module OmniAuth
   module Azure
     module Activedirectory
       module V2
-        VERSION = "2.0.0"
-        DATE    = "2022-09-14"
+        VERSION = "2.0.1"
+        DATE    = "2023-01-11"
       end
     end
   end
