@@ -12,10 +12,10 @@ Gem::Specification.new do |s|
   s.version               = OmniAuth::Azure::Activedirectory::V2::VERSION
   s.date                  = OmniAuth::Azure::Activedirectory::V2::DATE
   s.summary               = 'OAuth 2 authentication with the Azure ActiveDirectory V2 API.'
-  s.authors               = [ 'RIP Global'        ]
-  s.email                 = [ 'dev@ripglobal.com' ]
+  s.authors               = [ 'RIPA Global'        ]
+  s.email                 = [ 'dev@ripaglobal.com' ]
   s.licenses              = [ 'MIT'               ]
-  s.homepage              = 'https://github.com/RIPGlobal/omniauth-azure-activedirectory-v2'
+  s.homepage              = 'https://github.com/RIPAGlobal/omniauth-azure-activedirectory-v2'
 
   s.required_ruby_version = Gem::Requirement.new('>= 2.3.0')
   s.require_paths         = ['lib']
@@ -39,10 +39,10 @@ Gem::Specification.new do |s|
   }
 
   s.metadata = {
-    'homepage_uri'    => 'https://www.ripglobal.com/',
-    'bug_tracker_uri' => 'https://github.com/RIPGlobal/omniauth-azure-activedirectory-v2/issues/',
-    'changelog_uri'   => 'https://github.com/RIPGlobal/omniauth-azure-activedirectory-v2/blob/master/CHANGELOG.md',
-    'source_code_uri' => 'https://github.com/RIPGlobal/omniauth-azure-activedirectory-v2'
+    'homepage_uri'    => 'https://www.ripaglobal.com/',
+    'bug_tracker_uri' => 'https://github.com/RIPAGlobal/omniauth-azure-activedirectory-v2/issues/',
+    'changelog_uri'   => 'https://github.com/RIPAGlobal/omniauth-azure-activedirectory-v2/blob/master/CHANGELOG.md',
+    'source_code_uri' => 'https://github.com/RIPAGlobal/omniauth-azure-activedirectory-v2'
   }
 
   s.add_runtime_dependency('omniauth-oauth2', '~> 1.8')
