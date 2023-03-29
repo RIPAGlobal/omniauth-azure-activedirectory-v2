@@ -40,12 +40,27 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
         expect(subject.client.options[:token_url]).to eql('https://login.microsoftonline.com/tenant/oauth2/v2.0/token')
       end
 
+      it 'supports authorization_params' do
+        @options = { authorize_params: {prompt: 'select_account'} }
+        allow(subject).to receive(:request) { request }
+        subject.client
+        expect(subject.authorize_params[:prompt]).to eql('select_account')
+      end
+
       describe "overrides" do
         it 'should override domain_hint' do
           @options = {domain_hint: 'hint'}
           allow(subject).to receive(:request) { request }
           subject.client
           expect(subject.authorize_params[:domain_hint]).to eql('hint')
+        end
+
+        it 'overrides prompt via query parameter' do
+          @options = { authorize_params: {prompt: 'select_account'} }
+          override_request = double('Request', :params => {'prompt'.to_s => 'consent'}, :cookies => {}, :env => {})
+          allow(subject).to receive(:request) { override_request }
+          subject.client
+          expect(subject.authorize_params[:prompt]).to eql('consent')
         end
       end
     end
