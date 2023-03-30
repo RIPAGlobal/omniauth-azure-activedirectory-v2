@@ -19,7 +19,7 @@ module OmniAuth
         provider = if options.tenant_provider
           options.tenant_provider.new(self)
         else
-          options # if pass has to config, get mapped right on to options
+          options
         end
 
         options.client_id = provider.client_id
