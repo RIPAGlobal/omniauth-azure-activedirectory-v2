@@ -44,9 +44,7 @@ module OmniAuth
         super
       end
 
-      uid do
-        raw_info['oid']
-      end
+      uid { raw_info['sub'] }
 
       info do
         {
