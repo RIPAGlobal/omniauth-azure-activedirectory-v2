@@ -17,10 +17,10 @@ module OmniAuth
 
       def client
         provider = if options.tenant_provider
-                     options.tenant_provider.new(self)
-                   else
-                     options # if pass has to config, get mapped right on to options
-                   end
+          options.tenant_provider.new(self)
+        else
+          options # if pass has to config, get mapped right on to options
+        end
 
         options.client_id = provider.client_id
         options.client_secret = provider.client_secret
@@ -29,14 +29,23 @@ module OmniAuth
         options.base_azure_url =
           provider.respond_to?(:base_azure_url) ? provider.base_azure_url : BASE_AZURE_URL
 
-        options.authorize_params = provider.authorize_params if provider.respond_to?(:authorize_params)
+        if provider.respond_to?(:authorize_params)
+          options.authorize_params = provider.authorize_params
+        end
+
         if provider.respond_to?(:domain_hint) && provider.domain_hint
           options.authorize_params.domain_hint = provider.domain_hint
         end
-        options.authorize_params.prompt = request.params['prompt'] if defined?(request) && request.params['prompt']
-        options.authorize_params.scope = (if provider.respond_to?(:scope) && provider.scope
-                                            provider.scope
-                                          end) || DEFAULT_SCOPE
+
+        if defined?(request) && request.params['prompt']
+          options.authorize_params.prompt = request.params['prompt']
+        end
+
+        if provider.respond_to?(:scope) && provider.scope
+          options.authorize_params.scope = provider.scope
+        else
+          options.authorize_params.scope = DEFAULT_SCOPE
+        end
 
         options.client_options.authorize_url = "#{options.base_azure_url}/#{options.tenant_id}/oauth2/v2.0/authorize"
         options.client_options.token_url = "#{options.base_azure_url}/#{options.tenant_id}/oauth2/v2.0/token"
@@ -44,7 +53,7 @@ module OmniAuth
         super
       end
 
-      uid { raw_info['sub'] }
+      uid { raw_info['oid'] }
 
       info do
         {
