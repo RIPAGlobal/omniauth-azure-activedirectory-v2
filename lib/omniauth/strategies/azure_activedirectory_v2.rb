@@ -41,10 +41,10 @@ module OmniAuth
           options.authorize_params.prompt = request.params['prompt']
         end
 
-        if provider.respond_to?(:scope) && provider.scope
-          options.authorize_params.scope = provider.scope
+        options.authorize_params.scope = if provider.respond_to?(:scope) && provider.scope
+          provider.scope
         else
-          options.authorize_params.scope = DEFAULT_SCOPE
+          DEFAULT_SCOPE
         end
 
         options.client_options.authorize_url = "#{options.base_azure_url}/#{options.tenant_id}/oauth2/v2.0/authorize"
