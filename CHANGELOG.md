@@ -1,5 +1,9 @@
 # Change Log
 
+## v2.0.2 (2023-03-31)
+
+[Fixes](https://github.com/RIPAGlobal/omniauth-azure-activedirectory-v2/pull/16) inability to override prompt in authorisation parameters - thanks @lamroger
+
 ## v2.0.1 (2023-01-11)
 
 Renames:
