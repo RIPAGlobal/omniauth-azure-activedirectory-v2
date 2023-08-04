@@ -99,11 +99,21 @@ All of the items listed below are optional, unless noted otherwise. They can be 
 | `client_secret`    | **Mandatory.** Client secret for the 'application' (integration) configured on the Azure side. Found via the Azure UI. |
 | `base_azure_url`   | Location of Azure login page, for specialised requirements; default is `OmniAuth::Strategies::AzureActivedirectoryV2::BASE_AZURE_URL` (at the time of writing, this is `https://login.microsoftonline.com`). |
 | `tenant_id`        | _Azure_ tenant ID for multi-tenanted use. Default is `common`. Forms part of the Azure OAuth URL - `{base}/{tenant_id}/oauth2/v2.0/...` |
+| `custom_policy`    | _Azure_ custom policy. Default is nil. Forms part of the Azure Token URL - `{base}/{tenant_id}/{custom_policy}/oauth2/v2.0/...` |
 | `authorize_params` | Additional parameters passed as URL query data in the initial OAuth redirection to Microsoft. See below for more. Empty Hash default. |
 | `domain_hint`      | If defined, sets (overwriting, if already present) `domain_hint` inside `authorize_params`. Default `nil` / none. |
 | `scope`            | If defined, sets (overwriting, if already present) `scope` inside `authorize_params`. Default is `OmniAuth::Strategies::AzureActivedirectoryV2::DEFAULT_SCOPE` (at the time of writing, this is `'openid profile email'`). |
 
 In addition, as a special case, if the request URL contains a query parameter `prompt`, then this will be written into `authorize_params` under that key, overwriting if present any other value there. Note that this comes from the current request URL at the time OAuth flow is commencing, _not_ via static options Hash data or via a custom provider class - but you _could_ just as easily set `scope` inside a custom `authorize_params` returned from a provider class, as shown in an example later; the request URL query mechanism is just another way of doing the same thing.
+
+#### Custom Policies
+In the Microsoft documentation for (requesting a token)[https://learn.microsoft.com/en-us/azure/active-directory-b2c/access-tokens#request-a-token], they want the name of the custom policy in the URL rather than in the body of the request:
+```
+POST <tenant-name>.b2clogin.com/<tenant-name>.onmicrosoft.com/<policy-name>/oauth2/v2.0/token
+```
+When the underlying `oath2` gem creates the request for getting a token via POST, it places all `params` (which would include anything you've provided in the normal configuration to name your custom policy) in the `body`` of the request. Unfortunately, Microsoft ignores custom policies in the body and only looks for them in the URL.
+
+If you set a `custom_policy` in your configuration, it will be included in the URL between the `tenant_id` and the remaining parts of the path (`/oauth2/v2.0/token`).
 
 #### Explaining `authorize_params`
 
@@ -156,7 +166,15 @@ In method `#authorize_params` above, the request object is used to look for a `l
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/RIPAGlobal/omniauth-azure-activedirectory-v2. This project is intended to be a safe, welcoming space for collaboration so contributors must adhere to the [code of conduct](https://github.com/RIPAGlobal/omniauth-azure-activedirectory-v2/blob/master/CODE_OF_CONDUCT.md).
 
+### Getting running
+* Fork the repository
+* Checkout your fork
+* cd into the repo
+* `bin/setup`
+* `bundle exec rspec` to make sure all the specs run
 
+### Making changes
+* Make your change and add specs
 
 ## License
 

@@ -40,6 +40,14 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
         expect(subject.client.options[:token_url]).to eql('https://login.microsoftonline.com/tenant/oauth2/v2.0/token')
       end
 
+      context 'when a custom policy is present' do
+        it 'includes custom policy in token url' do
+          @options = { custom_policy: 'my_policy' }
+          allow(subject).to receive(:request) { request }
+          expect(subject.client.options[:token_url]).to eql('https://login.microsoftonline.com/tenant/my_policy/oauth2/v2.0/token')
+        end
+      end
+
       it 'supports authorization_params' do
         @options = { authorize_params: {prompt: 'select_account'} }
         allow(subject).to receive(:request) { request }
