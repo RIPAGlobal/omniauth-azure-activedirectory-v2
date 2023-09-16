@@ -106,12 +106,15 @@ All of the items listed below are optional, unless noted otherwise. They can be 
 
 In addition, as a special case, if the request URL contains a query parameter `prompt`, then this will be written into `authorize_params` under that key, overwriting if present any other value there. Note that this comes from the current request URL at the time OAuth flow is commencing, _not_ via static options Hash data or via a custom provider class - but you _could_ just as easily set `scope` inside a custom `authorize_params` returned from a provider class, as shown in an example later; the request URL query mechanism is just another way of doing the same thing.
 
-#### Custom Policies
-In the Microsoft documentation for (requesting a token)[https://learn.microsoft.com/en-us/azure/active-directory-b2c/access-tokens#request-a-token], they want the name of the custom policy in the URL rather than in the body of the request:
+#### Explaining `custom_policy`
+
+In the documentation for [requesting a token](https://learn.microsoft.com/en-us/azure/active-directory-b2c/access-tokens#request-a-token), Microsoft indicate that they want the name of custom policies to be given in the URL rather than in the body of the request:
+
 ```
 POST <tenant-name>.b2clogin.com/<tenant-name>.onmicrosoft.com/<policy-name>/oauth2/v2.0/token
 ```
-When the underlying `oath2` gem creates the request for getting a token via POST, it places all `params` (which would include anything you've provided in the normal configuration to name your custom policy) in the `body`` of the request. Unfortunately, Microsoft ignores custom policies in the body and only looks for them in the URL.
+
+When the underlying `oath2` gem creates the request for getting a token via POST, it places all `params` (which would include anything you've provided in the normal configuration to name your custom policy) in the `body` of the request. Unfortunately, Microsoft ignores custom policies in the body and only looks for them in the URL.
 
 If you set a `custom_policy` in your configuration, it will be included in the URL between the `tenant_id` and the remaining parts of the path (`/oauth2/v2.0/token`).
 
@@ -161,20 +164,23 @@ In method `#authorize_params` above, the request object is used to look for a `l
 
 
 
-
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/RIPAGlobal/omniauth-azure-activedirectory-v2. This project is intended to be a safe, welcoming space for collaboration so contributors must adhere to the [code of conduct](https://github.com/RIPAGlobal/omniauth-azure-activedirectory-v2/blob/master/CODE_OF_CONDUCT.md).
 
 ### Getting running
+
 * Fork the repository
-* Checkout your fork
-* cd into the repo
+* Check out your fork
+* `cd` into the repository
 * `bin/setup`
-* `bundle exec rspec` to make sure all the specs run
+* `bundle exec rspec` to make sure all the tests run
 
 ### Making changes
-* Make your change and add specs
+
+* Make your change
+* Add tests and check that `bundle exec rspec` still runs successfully
+* For new features (rather than bug fixes), update `README.md` with details
 
 ## License
 
