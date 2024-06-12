@@ -41,7 +41,9 @@ module OmniAuth
           options.authorize_params.prompt = request.params['prompt']
         end
 
-        options.authorize_params.scope = if provider.respond_to?(:scope) && provider.scope
+        options.authorize_params.scope = if defined?(request) && request.params['scope']
+          request.params['scope']
+        elsif provider.respond_to?(:scope) && provider.scope
           provider.scope
         else
           DEFAULT_SCOPE
