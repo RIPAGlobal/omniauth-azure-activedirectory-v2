@@ -1,8 +1,8 @@
 # OmniAuth::Azure::Activedirectory::V2
 
-[![Gem Version](https://badge.fury.io/rb/omniauth-azure-activedirectory-v2.svg)](https://badge.fury.io/rb/omniauth-azure-activedirectory-v2)
-[![Build Status](https://app.travis-ci.com/RIPAGlobal/omniauth-azure-activedirectory-v2.svg?branch=master)](https://app.travis-ci.com/github/RIPAGlobal/omniauth-azure-activedirectory-v2)
-[![License](https://img.shields.io/github/license/RIPAGlobal/omniauth-azure-activedirectory-v2.svg)](LICENSE.md)
+[![Gem Version](https://badge.fury.io/rb/omniauth-azure-activedirectory-v2.svg)](https://rubygems.org/gems/omniauth-azure-activedirectory-v2)
+[![Build Status](https://github.com/RIPAGlobal/omniauth-azure-activedirectory-v2/actions/workflows/master.yml/badge.svg)](https://github.com/RIPAGlobal/omniauth-azure-activedirectory-v2/actions)
+[![License](https://img.shields.io/github/license/RIPAGlobal/omniauth-azure-activedirectory-v2.svg)](LICENSE.txt)
 
 OAuth 2 authentication with [Azure ActiveDirectory's V2 API](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-overview). Rationale:
 
