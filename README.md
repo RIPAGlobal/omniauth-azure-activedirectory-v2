@@ -25,12 +25,15 @@ gem 'omniauth-azure-activedirectory-v2'
 
 And then execute:
 
-    $ bundle install
+```shell
+$ bundle install
+```
 
 Or install it yourself as:
 
-    $ gem install omniauth-azure-activedirectory-v2
-
+```shell
+$ gem install omniauth-azure-activedirectory-v2
+```
 
 
 ## Usage
@@ -162,6 +165,14 @@ In method `#authorize_params` above, the request object is used to look for a `l
 
 > **NB:** Naming things is hard! The predecessor gem used the name `YouTenantProvider` since it was focused on custom tenant provision, but if using this in a more generic way, perhaps consider a more generic name such as, say, `CustomOmniAuthAzureProvider`.
 
+#### Special case scope override
+
+If required and more convenient, you can specify a custom `scope` value via generation of an authorisation URL including that required `scope`, rather than by using a custom provider class with `def scope...end` method. Include the `scope` value in your call to generate the URL thus:
+
+```ruby
+omniauth_authorize_url('resource_name_eg_user', 'azure_activedirectory_v2', scope: '...')
+```
+
 
 
 ## Contributing
@@ -181,6 +192,8 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/RIPAGl
 * Make your change
 * Add tests and check that `bundle exec rspec` still runs successfully
 * For new features (rather than bug fixes), update `README.md` with details
+
+
 
 ## License
 

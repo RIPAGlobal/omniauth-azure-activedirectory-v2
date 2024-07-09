@@ -1,5 +1,9 @@
 # Change Log
 
+## v2.2.0 (2024-07-09)
+
+[Implements](https://github.com/RIPAGlobal/omniauth-azure-activedirectory-v2/pull/26) support for specifying `scope` via the authorisation URL, in addition to the prior support for static configuration or configuration via a custom provider class - thanks @nbgoodall!
+
 ## v2.1.0 (2023-09-16)
 
 [Implements](https://github.com/RIPAGlobal/omniauth-azure-activedirectory-v2/pull/19) support for custom policies when using Microsoft Azure AD - thanks @stevenchanin!

@@ -299,6 +299,12 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
       it 'has correct token url' do
         expect(subject.client.options[:token_url]).to eql('https://login.microsoftonline.com/common/oauth2/v2.0/token')
       end
+
+      it 'has correct scope from request params' do
+        request.params['scope'] = 'openid email offline_access Calendars.Read'
+        subject.client
+        expect(subject.authorize_params[:scope]).to eql('openid email offline_access Calendars.Read')
+      end
     end
   end
 
