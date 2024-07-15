@@ -136,6 +136,25 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
     end
   end
 
+  describe 'static configuration with on premise ADFS' do
+    let(:options) { @options || {} }
+    subject do
+      OmniAuth::Strategies::AzureActivedirectoryV2.new(app, {client_id: 'id', client_secret: 'secret', tenant_id: 'adfs', base_azure_url: 'https://login.contoso.com', adfs: true}.merge(options))
+    end
+
+    describe '#client' do
+      it 'has correct authorize url' do
+        allow(subject).to receive(:request) { request }
+        expect(subject.client.options[:authorize_url]).to eql('https://login.contoso.com/adfs/oauth2/authorize')
+      end
+
+      it 'has correct token url' do
+        allow(subject).to receive(:request) { request }
+        expect(subject.client.options[:token_url]).to eql('https://login.contoso.com/adfs/oauth2/token')
+      end
+    end
+  end
+
   describe 'dynamic configuration' do
     let(:provider_klass) {
       Class.new {
@@ -304,6 +323,53 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
         request.params['scope'] = 'openid email offline_access Calendars.Read'
         subject.client
         expect(subject.authorize_params[:scope]).to eql('openid email offline_access Calendars.Read')
+      end
+    end
+  end
+
+  describe 'dynamic configuration with on premise ADFS' do
+    let(:provider_klass) {
+      Class.new {
+        def initialize(strategy)
+        end
+
+        def client_id
+          'id'
+        end
+
+        def client_secret
+          'secret'
+        end
+
+        def tenant_id
+          'adfs'
+        end
+
+        def base_azure_url
+          'https://login.contoso.com'
+        end
+
+        def adfs?
+          true
+        end
+      }
+    }
+
+    subject do
+      OmniAuth::Strategies::AzureActivedirectoryV2.new(app, provider_klass)
+    end
+
+    before do
+      allow(subject).to receive(:request) { request }
+    end
+
+    describe '#client' do
+      it 'has correct authorize url' do
+        expect(subject.client.options[:authorize_url]).to eql('https://login.contoso.com/adfs/oauth2/authorize')
+      end
+
+      it 'has correct token url' do
+        expect(subject.client.options[:token_url]).to eql('https://login.contoso.com/adfs/oauth2/token')
       end
     end
   end

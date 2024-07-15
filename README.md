@@ -106,6 +106,7 @@ All of the items listed below are optional, unless noted otherwise. They can be 
 | `authorize_params` | Additional parameters passed as URL query data in the initial OAuth redirection to Microsoft. See below for more. Empty Hash default. |
 | `domain_hint`      | If defined, sets (overwriting, if already present) `domain_hint` inside `authorize_params`. Default `nil` / none. |
 | `scope`            | If defined, sets (overwriting, if already present) `scope` inside `authorize_params`. Default is `OmniAuth::Strategies::AzureActivedirectoryV2::DEFAULT_SCOPE` (at the time of writing, this is `'openid profile email'`). |
+| `adfs`             | If defined, modifies the URLs so they work with an on premise ADFS server. In order to use this you also need to set the `base_azure_url` correctly and fill the `tenant_id` with `'adfs'`. |
 
 In addition, as a special case, if the request URL contains a query parameter `prompt`, then this will be written into `authorize_params` under that key, overwriting if present any other value there. Note that this comes from the current request URL at the time OAuth flow is commencing, _not_ via static options Hash data or via a custom provider class - but you _could_ just as easily set `scope` inside a custom `authorize_params` returned from a provider class, as shown in an example later; the request URL query mechanism is just another way of doing the same thing.
 
