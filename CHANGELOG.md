@@ -1,5 +1,9 @@
 # Change Log
 
+## v2.3.0 (2024-07-16)
+
+[Implements](https://github.com/RIPAGlobal/omniauth-azure-activedirectory-v2/pull/29) support for on-premise Active Directory installations via the `adfs` option; see `README.md` for details - thanks @frenkel!
+
 ## v2.2.0 (2024-07-09)
 
 [Implements](https://github.com/RIPAGlobal/omniauth-azure-activedirectory-v2/pull/26) support for specifying `scope` via the authorisation URL, in addition to the prior support for static configuration or configuration via a custom provider class - thanks @nbgoodall!
