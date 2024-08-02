@@ -40,11 +40,11 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
         expect(subject.client.options[:token_url]).to eql('https://login.microsoftonline.com/tenant/oauth2/v2.0/token')
       end
 
-      context 'when a custom policy is present' do
-        it 'includes custom policy in token url' do
-          @options = { custom_policy: 'my_policy' }
+      context 'when a custom policy is present and start with b2c and tenant_name is present for b2c login' do
+        it 'includes custom policy and tenane name in authorize url' do
+          @options = { tenant_name: "test", custom_policy: 'my_policy' }
           allow(subject).to receive(:request) { request }
-          expect(subject.client.options[:token_url]).to eql('https://login.microsoftonline.com/tenant/my_policy/oauth2/v2.0/token')
+          expect(subject.client.options[:token_url]).to eql('https://test.b2clogin.com/test.onmicrosoft.com/my_policy/oauth2/v2.0/token')
         end
       end
 
@@ -102,6 +102,14 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
         allow(subject).to receive(:request) { request }
         subject.client
         expect(subject.authorize_params[:scope]).to eql('openid profile email')
+      end
+
+      context 'when a custom policy is present and start with b2c and tenant_name is present for b2c login' do
+        it 'includes custom policy and tenane name in authorize url' do
+          @options = { tenant_name: "test", custom_policy: 'my_policy' }
+          allow(subject).to receive(:request) { request }
+          expect(subject.client.options[:authorize_url]).to eql('https://test.b2clogin.com/test.onmicrosoft.com/my_policy/oauth2/v2.0/authorize')
+        end
       end
 
       describe "overrides" do
