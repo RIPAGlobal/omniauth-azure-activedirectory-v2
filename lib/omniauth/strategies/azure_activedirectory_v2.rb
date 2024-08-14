@@ -23,7 +23,20 @@ module OmniAuth
         end
 
         options.client_id = provider.client_id
-        options.client_secret = provider.client_secret
+
+        if provider.respond_to?(:client_secret) && provider.client_secret
+          options.client_secret = provider.client_secret
+        elsif provider.respond_to?(:certificate_path) && provider.respond_to?(:tenant_id) && provider.certificate_path && provider.tenant_id
+          options.token_params = {
+            tenant: provider.tenant_id,
+            client_id: provider.client_id,
+            client_assertion: client_assertion(provider.tenant_id, provider.client_id, provider.certificate_path),
+            client_assertion_type: client_assertion_type
+          }
+        else
+          raise ArgumentError, "You must provide either client_secret or certificate_path and tenant_id"
+        end
+
         options.tenant_id =
           provider.respond_to?(:tenant_id) ? provider.tenant_id : 'common'
         options.base_azure_url =
@@ -112,6 +125,37 @@ module OmniAuth
         end
 
         @raw_info
+      end
+
+      # The below methods support the flow for using certificate-based client assertion authentication.
+      # See this documentation for details:
+      # https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow#request-an-access-token-with-a-certificate-credential
+      def client_assertion_type
+        'urn:ietf:params:oauth:client-assertion-type:jwt-bearer'
+      end
+
+      def client_assertion_claims(tenant_id, client_id)
+        {
+          'aud' => "https://login.microsoftonline.com/#{tenant_id}/oauth2/v2.0/token",
+          'exp' => Time.now.to_i + 300,
+          'iss' => client_id,
+          'jti' => SecureRandom.uuid,
+          'nbf' => Time.now.to_i,
+          'sub' => client_id,
+          'iat' => Time.now.to_i
+        }
+      end
+
+      def client_assertion(tenant_id, client_id, certificate_path)
+        certificate_file = OpenSSL::PKCS12.new(File.read(certificate_path))
+        certificate_thumbprint ||= Digest::SHA1.digest(certificate_file.certificate.to_der)
+        private_key = OpenSSL::PKey::RSA.new(certificate_file.key)
+
+        claims = client_assertion_claims(tenant_id, client_id)
+        x5c = Base64.strict_encode64(certificate_file.certificate.to_der)
+        x5t = Base64.strict_encode64(certificate_thumbprint)
+
+        JWT.encode(claims, private_key, 'RS256', { 'x5c': [x5c], 'x5t': x5t })
       end
     end
   end

@@ -96,17 +96,22 @@ config.omniauth(
 
 All of the items listed below are optional, unless noted otherwise. They can be provided either in a static configuration Hash as shown in examples above, or via *read accessor instance methods* in a provider class (more on this later).
 
-| Option | Use |
-| ------ | --- |
-| `client_id`        | **Mandatory.** Client ID for the 'application' (integration) configured on the Azure side. Found via the Azure UI. |
-| `client_secret`    | **Mandatory.** Client secret for the 'application' (integration) configured on the Azure side. Found via the Azure UI. |
-| `base_azure_url`   | Location of Azure login page, for specialised requirements; default is `OmniAuth::Strategies::AzureActivedirectoryV2::BASE_AZURE_URL` (at the time of writing, this is `https://login.microsoftonline.com`). |
-| `tenant_id`        | _Azure_ tenant ID for multi-tenanted use. Default is `common`. Forms part of the Azure OAuth URL - `{base}/{tenant_id}/oauth2/v2.0/...` |
-| `custom_policy`    | _Azure_ custom policy. Default is nil. Forms part of the Azure Token URL - `{base}/{tenant_id}/{custom_policy}/oauth2/v2.0/...` |
-| `authorize_params` | Additional parameters passed as URL query data in the initial OAuth redirection to Microsoft. See below for more. Empty Hash default. |
-| `domain_hint`      | If defined, sets (overwriting, if already present) `domain_hint` inside `authorize_params`. Default `nil` / none. |
-| `scope`            | If defined, sets (overwriting, if already present) `scope` inside `authorize_params`. Default is `OmniAuth::Strategies::AzureActivedirectoryV2::DEFAULT_SCOPE` (at the time of writing, this is `'openid profile email'`). |
-| `adfs`             | If defined, modifies the URLs so they work with an on premise ADFS server. In order to use this you also need to set the `base_azure_url` correctly and fill the `tenant_id` with `'adfs'`. |
+To have your application authenticate with Entra (formerly known as AAD) via client secret, specify client_secret. If you instead want to use certificate-based authentication via client assertion, give the certificate_path and tenant_id instead. You should provide only client_secret or certificate_path, not both.
+
+If you're using the client assertion flow, you need to register your certificate in the Azure portal. For more information, please see [the documentation](https://learn.microsoft.com/en-us/entra/identity-platform/certificate-credentials).
+
+| Option             | Use                                                                                                                                                                                                                         |
+|--------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `client_id`        | **Mandatory.** Client ID for the 'application' (integration) configured on the Azure side. Found via the Azure UI.                                                                                                          |
+| `client_secret`    | **Mandatory for client secret flow.** Client secret for the 'application' (integration) configured on the Azure side. Found via the Azure UI. Don't give this if using client assertion flow.                               |
+| `certificate_path` | **Mandatory for client assertion flow.** Don't give this if using a client secret instead of client assertion. This should be the filepath to a PKCS#12 file.                                                               |
+| `base_azure_url`   | Location of Azure login page, for specialised requirements; default is `OmniAuth::Strategies::AzureActivedirectoryV2::BASE_AZURE_URL` (at the time of writing, this is `https://login.microsoftonline.com`).                |
+| `tenant_id`        | **Mandatory for client assertion flow.** _Azure_ tenant ID for multi-tenanted use. Default is `common`. Forms part of the Azure OAuth URL - `{base}/{tenant_id}/oauth2/v2.0/...`                                            |
+| `custom_policy`    | _Azure_ custom policy. Default is nil. Forms part of the Azure Token URL - `{base}/{tenant_id}/{custom_policy}/oauth2/v2.0/...`                                                                                             |
+| `authorize_params` | Additional parameters passed as URL query data in the initial OAuth redirection to Microsoft. See below for more. Empty Hash default.                                                                                       |
+| `domain_hint`      | If defined, sets (overwriting, if already present) `domain_hint` inside `authorize_params`. Default `nil` / none.                                                                                                           |
+| `scope`            | If defined, sets (overwriting, if already present) `scope` inside `authorize_params`. Default is `OmniAuth::Strategies::AzureActivedirectoryV2::DEFAULT_SCOPE` (at the time of writing, this is `'openid profile email'`).  |
+| `adfs`             | If defined, modifies the URLs so they work with an on premise ADFS server. In order to use this you also need to set the `base_azure_url` correctly and fill the `tenant_id` with `'adfs'`.                                 |
 
 In addition, as a special case, if the request URL contains a query parameter `prompt`, then this will be written into `authorize_params` under that key, overwriting if present any other value there. Note that this comes from the current request URL at the time OAuth flow is commencing, _not_ via static options Hash data or via a custom provider class - but you _could_ just as easily set `scope` inside a custom `authorize_params` returned from a provider class, as shown in an example later; the request URL query mechanism is just another way of doing the same thing.
 
