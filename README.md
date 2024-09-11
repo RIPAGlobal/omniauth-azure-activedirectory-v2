@@ -40,7 +40,15 @@ $ gem install omniauth-azure-activedirectory-v2
 
 Please start by reading https://github.com/marknadig/omniauth-azure-oauth2 for basic configuration and background information. Note that with this gem, you must use strategy name `azure_activedirectory_v2` rather than `azure_oauth2`. Additional configuration information is given below.
 
-### Configuration
+### Entra ID Configuration
+In most cases, you only want to receive 'verified' email addresses in
+your application. For older app registrations in the Azure portal,
+this may need to be [enabled explicitly](https://learn.microsoft.com/en-us/graph/applications-authenticationbehaviors?tabs=http#prevent-the-issuance-of-email-claims-with-unverified-domain-owners).
+
+It's [enabled by default](https://learn.microsoft.com/en-us/entra/identity-platform/migrate-off-email-claim-authorization#how-do-i-protect-my-application-immediately)
+for new multi-tenant app registrations made after June 2023.
+
+### Implementation
 
 #### With `OmniAuth::Builder`
 
