@@ -4,6 +4,8 @@
 [![Build Status](https://github.com/RIPAGlobal/omniauth-azure-activedirectory-v2/actions/workflows/master.yml/badge.svg)](https://github.com/RIPAGlobal/omniauth-azure-activedirectory-v2/actions)
 [![License](https://img.shields.io/github/license/RIPAGlobal/omniauth-azure-activedirectory-v2.svg)](LICENSE.txt)
 
+**IMPORTANT: V2 is EOL** and has been replaced by V3, which is also a renamed gem, since Microsoft in their "wisdom" renamed Azure AD to Entra ID and a gem using the old name will become increasingly hard for people to 'discover'. The major version bump provides an opportunity to fix a few things with breaking changes, too. Please switch to `omniauth-entra-id`.
+
 OAuth 2 authentication with [Azure ActiveDirectory's V2 API](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-overview). Rationale:
 
 * https://github.com/marknadig/omniauth-azure-oauth2 is no longer maintained.

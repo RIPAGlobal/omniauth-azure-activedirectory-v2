@@ -17,3 +17,7 @@ Gemfile.lock
 
 # built gems
 *.gem
+
+# macOS metadata
+.DS_Store
+
