@@ -8,6 +8,14 @@ require 'omniauth/azure_activedirectory_v2/version'
 # https://guides.rubygems.org/specification-reference/
 #
 Gem::Specification.new do |s|
+  s.post_install_message = <<-MESSAGE
+  !    The 'omniauth-azure-activedirectory-v2' gem has been deprecated and is
+  !    replaced by 'omniauth-entra-id'.
+  !
+  !    See: https://rubygems.org/gems/omniauth-entra-id
+  !    And: https://github.com/RIPAGlobal/omniauth-entra-id
+  MESSAGE
+
   s.name                  = 'omniauth-azure-activedirectory-v2'
   s.version               = OmniAuth::Azure::Activedirectory::V2::VERSION
   s.date                  = OmniAuth::Azure::Activedirectory::V2::DATE
