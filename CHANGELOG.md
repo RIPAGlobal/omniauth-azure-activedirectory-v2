@@ -1,5 +1,9 @@
 # Change Log
 
+## v2.4.0 (2024-10-17)
+
+Deprecation warnings for end-of-life of the gem under this name. No other changes. The GitHub repository is to be renamed and the gem released (starting at major version 3) as `omniauth-entra-id`, with some breaking changes but details of how to update will be provided in the new gem via an `UPGRADING.md` document.
+
 ## v2.3.0 (2024-07-16)
 
 [Implements](https://github.com/RIPAGlobal/omniauth-azure-activedirectory-v2/pull/29) support for on-premise Active Directory installations via the `adfs` option; see `README.md` for details - thanks @frenkel!
