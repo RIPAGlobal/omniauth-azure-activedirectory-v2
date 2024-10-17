@@ -380,10 +380,22 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
     end
 
     let(:id_token_info) do
+      issued_at = Time.now.utc.to_i
+      expires_at = (Time.now + 3600).to_i
       {
-        oid:         'my_id',
-        name:        'Bob Doe',
-        email:       'bob@doe.com',
+        ver: '2.0',
+        iss: 'https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0',
+        sub: 'sdfkjllAkdkWkeiidkcXKfjjsl',
+        aud: 'id',
+        exp: expires_at,
+        iat: issued_at,
+        nbf: issued_at,
+        name: 'Bob Doe',
+        preferred_username: 'bob@doe.com',
+        oid: 'my_id',
+        email: 'bob@doe.com',
+        tid: '9188040d-6c67-4c5b-b112-36a304b66dad',
+        aio: 'KSslldiwDkfjjsoeiruosKD',
         unique_name: 'bobby'
       }
     end
@@ -413,15 +425,27 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
       end
 
       it 'returns correct uid' do
-        expect(subject.uid).to eq('my_id')
+        expect(subject.uid).to eq('9188040d-6c67-4c5b-b112-36a304b66dadmy_id')
       end
     end # "context 'with information only in the ID token' do"
 
     context 'with extra information in the auth token' do
       let(:auth_token_info) do
+        issued_at = Time.now.utc.to_i
+        expires_at = (Time.now + 3600).to_i
         {
-          oid:         'overridden_id',
-          email:       'bob@doe.com',
+          ver: '2.0',
+          iss: 'https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0',
+          sub: 'sdfkjllAkdkWkeiidkcXKfjjsl',
+          aud: 'id',
+          exp: expires_at,
+          iat: issued_at,
+          nbf: issued_at,
+          preferred_username: 'bob@doe.com',
+          oid: 'overridden_id',
+          email: 'bob@doe.com',
+          tid: '9188040d-6c67-4c5b-b112-36a304b66dad',
+          aio: 'KSslldiwDkfjjsoeiruosKD',
           unique_name: 'Bobby Definitely Doe',
           given_name:  'Bob',
           family_name: 'Doe'
@@ -447,9 +471,100 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
       end
 
       it 'returns correct uid' do
-        expect(subject.uid).to eq('overridden_id')
+        expect(subject.uid).to eq('9188040d-6c67-4c5b-b112-36a304b66dadoverridden_id')
       end
     end # "context 'with extra information in the auth token' do"
+
+    context 'with an invalid audience' do
+      let(:id_token_info) do
+        issued_at = Time.now.utc.to_i
+        expires_at = (Time.now + 3600).to_i
+        {
+          ver: '2.0',
+          iss: 'https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0',
+          sub: 'sdfkjllAkdkWkeiidkcXKfjjsl',
+          aud: 'other-id',
+          exp: expires_at,
+          iat: issued_at,
+          nbf: issued_at,
+          name: 'Bob Doe',
+          preferred_username: 'bob@doe.com',
+          oid: 'my_id',
+          email: 'bob@doe.com',
+          tid: '9188040d-6c67-4c5b-b112-36a304b66dad',
+          aio: 'KSslldiwDkfjjsoeiruosKD',
+          unique_name: 'bobby'
+        }
+      end
+
+      it 'fails validation' do
+        expect { subject.info }.to raise_error(JWT::InvalidAudError)
+      end
+    end
+
+    context 'with an invalid issuer' do
+      subject do
+        OmniAuth::Strategies::AzureActivedirectoryV2.new(app, {client_id: 'id', client_secret: 'secret', tenant_id: 'test-tenant'})
+      end
+
+      it 'fails validation' do
+        expect { subject.info }.to raise_error(JWT::InvalidIssuerError)
+      end
+    end
+
+    context 'with an invalid not_before' do
+      let(:id_token_info) do
+        issued_at = (Time.now + 70).to_i # Since leeway is 60 seconds
+        expires_at = (Time.now + 3600).to_i
+        {
+          ver: '2.0',
+          iss: 'https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0',
+          sub: 'sdfkjllAkdkWkeiidkcXKfjjsl',
+          aud: 'id',
+          exp: expires_at,
+          iat: issued_at,
+          nbf: issued_at,
+          name: 'Bob Doe',
+          preferred_username: 'bob@doe.com',
+          oid: 'my_id',
+          email: 'bob@doe.com',
+          tid: '9188040d-6c67-4c5b-b112-36a304b66dad',
+          aio: 'KSslldiwDkfjjsoeiruosKD',
+          unique_name: 'bobby'
+        }
+      end
+
+      it 'fails validation' do
+        expect { subject.info }.to raise_error(JWT::ImmatureSignature)
+      end
+    end
+
+    context 'with an expired token' do
+      let(:id_token_info) do
+        issued_at = (Time.now - 3600).to_i
+        expires_at = (Time.now - 70).to_i # Since leeway is 60 seconds
+        {
+          ver: '2.0',
+          iss: 'https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0',
+          sub: 'sdfkjllAkdkWkeiidkcXKfjjsl',
+          aud: 'id',
+          exp: expires_at,
+          iat: issued_at,
+          nbf: issued_at,
+          name: 'Bob Doe',
+          preferred_username: 'bob@doe.com',
+          oid: 'my_id',
+          email: 'bob@doe.com',
+          tid: '9188040d-6c67-4c5b-b112-36a304b66dad',
+          aio: 'KSslldiwDkfjjsoeiruosKD',
+          unique_name: 'bobby'
+        }
+      end
+
+      it 'fails validation' do
+        expect { subject.info }.to raise_error(JWT::ExpiredSignature)
+      end
+    end
   end   # "describe 'raw_info' do"
 
   describe 'callback_url' do
