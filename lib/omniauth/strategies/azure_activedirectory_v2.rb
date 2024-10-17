@@ -9,6 +9,8 @@ module OmniAuth
 
       option :name, 'azure_activedirectory_v2'
       option :tenant_provider, nil
+      option :jwt_leeway, 60
+
 
       DEFAULT_SCOPE = 'openid profile email'
 
@@ -81,12 +83,17 @@ module OmniAuth
         super
       end
 
-      uid { raw_info['oid'] }
+      uid do
+        # as instructed by https://learn.microsoft.com/en-us/entra/identity-platform/migrate-off-email-claim-authorization
+        raw_info['tid'] + raw_info['oid']
+        # Alternative would be to use 'sub' but this is only unique in client/app registration context. If a different
+        # app registration is used, the 'sub' values can be different
+      end
 
       info do
         {
           name: raw_info['name'],
-          email: raw_info['email'] || raw_info['upn'],
+          email: raw_info['email'],
           nickname: raw_info['unique_name'],
           first_name: raw_info['given_name'],
           last_name: raw_info['family_name']
@@ -118,6 +125,22 @@ module OmniAuth
           rescue StandardError
             {}
           end
+
+          # For multi-tenant apps ('common' tenant_id) it doesn't make any sense to verify the token issuer, because the
+          # value of 'iss' in the token depends on the 'tid' in the token itself
+          issuer = options.tenant_id.nil? ? nil : "#{options.base_azure_url}/#{options.tenant_id}/v2.0"
+
+          # https://learn.microsoft.com/en-us/entra/identity-platform/id-tokens#validate-tokens
+          JWT::Verify.verify_claims(
+            id_token_data,
+            verify_iss: !issuer.nil?,
+            iss: issuer,
+            verify_aud: true,
+            aud: options.client_id,
+            verify_expiration: true,
+            verify_not_before: true,
+            leeway: options[:jwt_leeway]
+          )
           auth_token_data = begin
             ::JWT.decode(access_token.token, nil, false).first
           rescue StandardError
