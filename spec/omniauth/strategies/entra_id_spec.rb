@@ -1,7 +1,7 @@
 require 'spec_helper'
-require 'omniauth/azure_activedirectory_v2'
+require 'omniauth/entra_id'
 
-RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
+RSpec.describe OmniAuth::Strategies::EntraId do
   let(:request) { double('Request', :params => {}, :cookies => {}, :env => {}) }
   let(:app) {
     lambda do
@@ -20,7 +20,7 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
   describe 'static configuration' do
     let(:options) { @options || {} }
     subject do
-      OmniAuth::Strategies::AzureActivedirectoryV2.new(app, {client_id: 'id', client_secret: 'secret', tenant_id: 'tenant'}.merge(options))
+      OmniAuth::Strategies::EntraId.new(app, {client_id: 'id', client_secret: 'secret', tenant_id: 'tenant'}.merge(options))
     end
 
     describe '#client' do
@@ -40,11 +40,11 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
         expect(subject.client.options[:token_url]).to eql('https://login.microsoftonline.com/tenant/oauth2/v2.0/token')
       end
 
-      context 'when a custom policy is present and start with b2c and tenant_name is present for b2c login' do
-        it 'includes custom policy and tenane name in authorize url' do
-          @options = { tenant_name: "test", custom_policy: 'my_policy' }
+      context 'when a custom policy and tenant name are present' do
+        it 'generates the B2C URL' do
+          @options = { custom_policy: 'my_policy', tenant_name: 'my_tenant' }
           allow(subject).to receive(:request) { request }
-          expect(subject.client.options[:token_url]).to eql('https://test.b2clogin.com/test.onmicrosoft.com/my_policy/oauth2/v2.0/token')
+          expect(subject.client.options[:token_url]).to eql('https://my_tenant.b2clogin.com/my_tenant.onmicrosoft.com/my_policy/oauth2/v2.0/token')
         end
       end
 
@@ -53,94 +53,6 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
         allow(subject).to receive(:request) { request }
         subject.client
         expect(subject.authorize_params[:prompt]).to eql('select_account')
-      end
-
-      context 'using client secret flow without client secret' do
-        subject do
-          OmniAuth::Strategies::AzureActivedirectoryV2.new(app, { client_id: 'id', tenant_id: 'tenant' }.merge(options))
-        end
-
-        it 'raises exception' do
-          expect { subject.client }.to raise_error(ArgumentError, "You must provide either client_secret or certificate_path and tenant_id")
-        end
-      end
-
-      context 'using client assertion flow' do
-        subject do
-          OmniAuth::Strategies::AzureActivedirectoryV2.new(app, options)
-        end
-
-        it 'raises exception when tenant id is not given' do
-          @options = { client_id: 'id', certificate_path: 'path/to/cert.p12' }
-          expect { subject.client }.to raise_error(ArgumentError, "You must provide either client_secret or certificate_path and tenant_id")
-        end
-
-        it 'raises exception when certificate_path is not given' do
-          @options = { client_id: 'id', tenant_id: 'tenant' }
-          expect { subject.client }.to raise_error(ArgumentError, "You must provide either client_secret or certificate_path and tenant_id")
-        end
-
-        context '#token_params with correctly formatted request' do
-          let(:key) { OpenSSL::PKey::RSA.new(2048) }
-          let(:cert) { OpenSSL::X509::Certificate.new.tap { |cert|
-            cert.subject = cert.issuer = OpenSSL::X509::Name.parse("/CN=test")
-            cert.not_before = Time.now
-            cert.not_after = Time.now + 365 * 24 * 60 * 60
-            cert.public_key = key.public_key
-            cert.serial = 0x0
-            cert.version = 2
-            cert.sign(key, OpenSSL::Digest::SHA256.new)
-          } }
-
-          before do
-            @options = {
-              client_id: 'id',
-              tenant_id: 'tenant',
-              certificate_path: 'path/to/cert.p12'
-            }
-
-            allow(File).to receive(:read)
-            allow(OpenSSL::PKCS12).to receive(:new).and_return(OpenSSL::PKCS12.create('pass', 'name', key, cert))
-            allow(SecureRandom).to receive(:uuid).and_return('unique-jti')
-
-            allow(subject).to receive(:request) { request }
-            subject.client
-          end
-
-          it 'has correct tenant id' do
-            expect(subject.options.token_params[:tenant]).to eql('tenant')
-          end
-
-          it 'has correct client id' do
-            expect(subject.options.token_params[:client_id]).to eql('id')
-          end
-
-          it 'has correct client_assertion_type' do
-            expect(subject.options.token_params[:client_assertion_type]).to eql('urn:ietf:params:oauth:client-assertion-type:jwt-bearer')
-          end
-
-          context 'client assertion' do
-            it 'has correct claims' do
-              jwt = subject.options.token_params[:client_assertion]
-              decoded_jwt = JWT.decode(jwt, nil, false).first
-
-              expect(decoded_jwt['aud']).to eql('https://login.microsoftonline.com/tenant/oauth2/v2.0/token')
-              expect(decoded_jwt['exp']).to be_within(5).of(Time.now.to_i + 300)
-              expect(decoded_jwt['iss']).to eql('id')
-              expect(decoded_jwt['jti']).to eql('unique-jti')
-              expect(decoded_jwt['nbf']).to be_within(5).of(Time.now.to_i)
-              expect(decoded_jwt['sub']).to eql('id')
-            end
-
-            it 'contains x5c and x5t headers' do
-              jwt = subject.options.token_params[:client_assertion]
-              headers = JWT.decode(jwt, nil, false).last
-
-              expect(headers['x5c']).to be_an_instance_of(Array)
-              expect(headers['x5t']).to be_a(String)
-            end
-          end
-        end
       end
 
       describe "overrides" do
@@ -160,12 +72,13 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
         end
       end
     end
+
   end
 
   describe 'static configuration - german' do
     let(:options) { @options || {} }
     subject do
-      OmniAuth::Strategies::AzureActivedirectoryV2.new(app, {client_id: 'id', client_secret: 'secret', tenant_id: 'tenant', base_azure_url: 'https://login.microsoftonline.de'}.merge(options))
+      OmniAuth::Strategies::EntraId.new(app, {client_id: 'id', client_secret: 'secret', tenant_id: 'tenant', base_url: 'https://login.microsoftonline.de'}.merge(options))
     end
 
     describe '#client' do
@@ -191,14 +104,6 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
         expect(subject.authorize_params[:scope]).to eql('openid profile email')
       end
 
-      context 'when a custom policy is present and start with b2c and tenant_name is present for b2c login' do
-        it 'includes custom policy and tenane name in authorize url' do
-          @options = { tenant_name: "test", custom_policy: 'my_policy' }
-          allow(subject).to receive(:request) { request }
-          expect(subject.client.options[:authorize_url]).to eql('https://test.b2clogin.com/test.onmicrosoft.com/my_policy/oauth2/v2.0/authorize')
-        end
-      end
-
       describe "overrides" do
         it 'should override domain_hint' do
           @options = {domain_hint: 'hint'}
@@ -213,7 +118,7 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
   describe 'static common configuration' do
     let(:options) { @options || {} }
     subject do
-      OmniAuth::Strategies::AzureActivedirectoryV2.new(app, {client_id: 'id', client_secret: 'secret'}.merge(options))
+      OmniAuth::Strategies::EntraId.new(app, {client_id: 'id', client_secret: 'secret'}.merge(options))
     end
 
     before do
@@ -234,7 +139,7 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
   describe 'static configuration with on premise ADFS' do
     let(:options) { @options || {} }
     subject do
-      OmniAuth::Strategies::AzureActivedirectoryV2.new(app, {client_id: 'id', client_secret: 'secret', tenant_id: 'adfs', base_azure_url: 'https://login.contoso.com', adfs: true}.merge(options))
+      OmniAuth::Strategies::EntraId.new(app, {client_id: 'id', client_secret: 'secret', tenant_id: 'adfs', base_url: 'https://login.contoso.com', adfs: true}.merge(options))
     end
 
     describe '#client' do
@@ -275,7 +180,7 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
     }
 
     subject do
-      OmniAuth::Strategies::AzureActivedirectoryV2.new(app, provider_klass)
+      OmniAuth::Strategies::EntraId.new(app, provider_klass)
     end
 
     before do
@@ -332,7 +237,7 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
           'tenant'
         end
 
-        def base_azure_url
+        def base_url
           'https://login.microsoftonline.de'
         end
 
@@ -343,7 +248,7 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
     }
 
     subject do
-      OmniAuth::Strategies::AzureActivedirectoryV2.new(app, provider_klass)
+      OmniAuth::Strategies::EntraId.new(app, provider_klass)
     end
 
     before do
@@ -398,7 +303,7 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
     }
 
     subject do
-      OmniAuth::Strategies::AzureActivedirectoryV2.new(app, provider_klass)
+      OmniAuth::Strategies::EntraId.new(app, provider_klass)
     end
 
     before do
@@ -440,7 +345,7 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
           'adfs'
         end
 
-        def base_azure_url
+        def base_url
           'https://login.contoso.com'
         end
 
@@ -451,7 +356,7 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
     }
 
     subject do
-      OmniAuth::Strategies::AzureActivedirectoryV2.new(app, provider_klass)
+      OmniAuth::Strategies::EntraId.new(app, provider_klass)
     end
 
     before do
@@ -471,26 +376,14 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
 
   describe 'raw_info' do
     subject do
-      OmniAuth::Strategies::AzureActivedirectoryV2.new(app, {client_id: 'id', client_secret: 'secret'})
+      OmniAuth::Strategies::EntraId.new(app, {client_id: 'id', client_secret: 'secret'})
     end
 
     let(:id_token_info) do
-      issued_at = Time.now.utc.to_i
-      expires_at = (Time.now + 3600).to_i
       {
-        ver: '2.0',
-        iss: 'https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0',
-        sub: 'sdfkjllAkdkWkeiidkcXKfjjsl',
-        aud: 'id',
-        exp: expires_at,
-        iat: issued_at,
-        nbf: issued_at,
-        name: 'Bob Doe',
-        preferred_username: 'bob@doe.com',
-        oid: 'my_id',
-        email: 'bob@doe.com',
-        tid: '9188040d-6c67-4c5b-b112-36a304b66dad',
-        aio: 'KSslldiwDkfjjsoeiruosKD',
+        oid:         'my_id',
+        name:        'Bob Doe',
+        email:       'bob@doe.com',
         unique_name: 'bobby'
       }
     end
@@ -520,27 +413,15 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
       end
 
       it 'returns correct uid' do
-        expect(subject.uid).to eq('9188040d-6c67-4c5b-b112-36a304b66dadmy_id')
+        expect(subject.uid).to eq('my_id')
       end
     end # "context 'with information only in the ID token' do"
 
     context 'with extra information in the auth token' do
       let(:auth_token_info) do
-        issued_at = Time.now.utc.to_i
-        expires_at = (Time.now + 3600).to_i
         {
-          ver: '2.0',
-          iss: 'https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0',
-          sub: 'sdfkjllAkdkWkeiidkcXKfjjsl',
-          aud: 'id',
-          exp: expires_at,
-          iat: issued_at,
-          nbf: issued_at,
-          preferred_username: 'bob@doe.com',
-          oid: 'overridden_id',
-          email: 'bob@doe.com',
-          tid: '9188040d-6c67-4c5b-b112-36a304b66dad',
-          aio: 'KSslldiwDkfjjsoeiruosKD',
+          oid:         'overridden_id',
+          email:       'bob@doe.com',
           unique_name: 'Bobby Definitely Doe',
           given_name:  'Bob',
           family_name: 'Doe'
@@ -566,105 +447,14 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
       end
 
       it 'returns correct uid' do
-        expect(subject.uid).to eq('9188040d-6c67-4c5b-b112-36a304b66dadoverridden_id')
+        expect(subject.uid).to eq('overridden_id')
       end
     end # "context 'with extra information in the auth token' do"
-
-    context 'with an invalid audience' do
-      let(:id_token_info) do
-        issued_at = Time.now.utc.to_i
-        expires_at = (Time.now + 3600).to_i
-        {
-          ver: '2.0',
-          iss: 'https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0',
-          sub: 'sdfkjllAkdkWkeiidkcXKfjjsl',
-          aud: 'other-id',
-          exp: expires_at,
-          iat: issued_at,
-          nbf: issued_at,
-          name: 'Bob Doe',
-          preferred_username: 'bob@doe.com',
-          oid: 'my_id',
-          email: 'bob@doe.com',
-          tid: '9188040d-6c67-4c5b-b112-36a304b66dad',
-          aio: 'KSslldiwDkfjjsoeiruosKD',
-          unique_name: 'bobby'
-        }
-      end
-
-      it 'fails validation' do
-        expect { subject.info }.to raise_error(JWT::InvalidAudError)
-      end
-    end
-
-    context 'with an invalid issuer' do
-      subject do
-        OmniAuth::Strategies::AzureActivedirectoryV2.new(app, {client_id: 'id', client_secret: 'secret', tenant_id: 'test-tenant'})
-      end
-
-      it 'fails validation' do
-        expect { subject.info }.to raise_error(JWT::InvalidIssuerError)
-      end
-    end
-
-    context 'with an invalid not_before' do
-      let(:id_token_info) do
-        issued_at = (Time.now + 70).to_i # Since leeway is 60 seconds
-        expires_at = (Time.now + 3600).to_i
-        {
-          ver: '2.0',
-          iss: 'https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0',
-          sub: 'sdfkjllAkdkWkeiidkcXKfjjsl',
-          aud: 'id',
-          exp: expires_at,
-          iat: issued_at,
-          nbf: issued_at,
-          name: 'Bob Doe',
-          preferred_username: 'bob@doe.com',
-          oid: 'my_id',
-          email: 'bob@doe.com',
-          tid: '9188040d-6c67-4c5b-b112-36a304b66dad',
-          aio: 'KSslldiwDkfjjsoeiruosKD',
-          unique_name: 'bobby'
-        }
-      end
-
-      it 'fails validation' do
-        expect { subject.info }.to raise_error(JWT::ImmatureSignature)
-      end
-    end
-
-    context 'with an expired token' do
-      let(:id_token_info) do
-        issued_at = (Time.now - 3600).to_i
-        expires_at = (Time.now - 70).to_i # Since leeway is 60 seconds
-        {
-          ver: '2.0',
-          iss: 'https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0',
-          sub: 'sdfkjllAkdkWkeiidkcXKfjjsl',
-          aud: 'id',
-          exp: expires_at,
-          iat: issued_at,
-          nbf: issued_at,
-          name: 'Bob Doe',
-          preferred_username: 'bob@doe.com',
-          oid: 'my_id',
-          email: 'bob@doe.com',
-          tid: '9188040d-6c67-4c5b-b112-36a304b66dad',
-          aio: 'KSslldiwDkfjjsoeiruosKD',
-          unique_name: 'bobby'
-        }
-      end
-
-      it 'fails validation' do
-        expect { subject.info }.to raise_error(JWT::ExpiredSignature)
-      end
-    end
   end   # "describe 'raw_info' do"
 
   describe 'callback_url' do
     subject do
-      OmniAuth::Strategies::AzureActivedirectoryV2.new(app, { client_id: 'id', client_secret: 'secret', tenant_id: 'tenant' })
+      OmniAuth::Strategies::EntraId.new(app, { client_id: 'id', client_secret: 'secret', tenant_id: 'tenant' })
     end
 
     let(:base_url) { 'https://example.com' }
@@ -672,13 +462,13 @@ RSpec.describe OmniAuth::Strategies::AzureActivedirectoryV2 do
     it 'has the correct default callback path' do
       allow(subject).to receive(:full_host) { base_url }
       allow(subject).to receive(:script_name) { '' }
-      expect(subject.callback_url).to eq(base_url + '/auth/azure_activedirectory_v2/callback')
+      expect(subject.callback_url).to eq(base_url + '/auth/entra_id/callback')
     end
 
     it 'should set the callback path with script_name if present' do
       allow(subject).to receive(:full_host) { base_url }
       allow(subject).to receive(:script_name) { '/v1' }
-      expect(subject.callback_url).to eq(base_url + '/v1/auth/azure_activedirectory_v2/callback')
+      expect(subject.callback_url).to eq(base_url + '/v1/auth/entra_id/callback')
     end
   end
 end

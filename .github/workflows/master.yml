@@ -22,7 +22,7 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby }}
         bundler-cache: true
-        rubygems: 3.5.11
+        rubygems: 3.5.12
 
     - name: Run tests
       run: bundle exec rspec --backtrace
